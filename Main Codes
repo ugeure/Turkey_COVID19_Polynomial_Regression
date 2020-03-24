@@ -1,0 +1,61 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Mar 24 17:24:30 2020
+
+@author: ugeure
+"""
+#importing librarys
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+#importing data
+df=pd.read_csv("Turkey_COVID19_Polynomial_Regression.csv",sep=";")#seperator = ;
+#converting data to np arrays
+x=df.Day.values.reshape(-1,1)
+y=df.Person_affected_virus.values.reshape(-1,1)
+#graphs of dataset
+plt.scatter(x,y,label="real data",color="pink")
+plt.xlabel("Days")
+plt.ylabel("Affected person by COVID-19")
+plt.title("Machine Learning Model of Turkey/COVID19 ")
+plt.show()
+
+
+#%% import  algorithm models
+from sklearn.preprocessing import PolynomialFeatures 
+from sklearn.linear_model import LinearRegression 
+
+Polynomial_Regression = PolynomialFeatures(degree=2) #degree is x^n n=2 /degree of poly.
+x_polynomial=Polynomial_Regression.fit_transform(x) #fit our inputs
+
+Linear_Regression = LinearRegression()
+Linear_Regression.fit(x_polynomial,y)
+
+y_polynomial=Linear_Regression.predict(x_polynomial)
+
+#graphs of poly
+
+#plt.plot(x_polynomial,y,color="blue",label="Poly")
+#plt.legend()
+#plt.show()
+
+#prepare a numpy array to predict the future persons
+predict_days=np.arange(15,25,1).reshape(-1,1)
+predict_values=np.ones((10,3))
+
+# give shape the array to operate our algorithms    
+predict_values[:,0]=1
+predict_values[:,1:2]=predict_days
+predict_values[:,2]=np.square(predict_days.reshape(10))
+
+#predictions
+predict_results= Linear_Regression.predict(predict_values)
+
+#plot the future values
+plt.plot(predict_days,predict_results,color="red",label="Poly-predict")
+plt.legend()
+plt.show()
+
+
+
